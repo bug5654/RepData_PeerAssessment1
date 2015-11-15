@@ -1,0 +1,16 @@
+---
+title: "Reproducible Research Project 1"
+author: "Nathan E. Wendling"
+date: "November 15, 2015"
+output: html_document
+---
+
+Initially load libraries and data
+```{r loadinfo, echo=TRUE}
+library(graphics)
+activity <- read.csv("activity.csv", header=TRUE, sep=",", quote="\"", na.strings="NA", stringsAsFactors=FALSE)
+tmptime <- activity$interval
+tmptime <- paste(floor(tmptime/60), ifelse(tmptime-60*floor(tmptime/60)<10, paste("0",tmptime-60*floor(tmptime/60), sep=""), tmptime-60*floor(tmptime/60)), sep=":") #hh:mm, with 0 padding on minutes
+timeToAct <- data.frame(strptime(paste(activity$date, tmptime, sep=" "), format="%Y-%m-%d %H:%M"), activity$steps)
+str(timeToAct)
+```
