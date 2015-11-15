@@ -6,11 +6,24 @@ output: html_document
 ---
 
 Initially load libraries and data
-```{r loadinfo, echo=TRUE}
+```{r loadinfo, echo=TRUE, results='hide'}
 library(graphics)
 activity <- read.csv("activity.csv", header=TRUE, sep=",", quote="\"", na.strings="NA", stringsAsFactors=FALSE)
 tmptime <- activity$interval
 tmptime <- paste(floor(tmptime/60), ifelse(tmptime-60*floor(tmptime/60)<10, paste("0",tmptime-60*floor(tmptime/60), sep=""), tmptime-60*floor(tmptime/60)), sep=":") #hh:mm, with 0 padding on minutes
 timeToAct <- data.frame(strptime(paste(activity$date, tmptime, sep=" "), format="%Y-%m-%d %H:%M"), activity$steps)
-str(timeToAct)
+colnames(timeToAct) <- c("Date", "Steps") #human understandable
+timeToAct$Date <- as.POSIXlt(timeToAct$Date) #easier to divide up
 ```
+
+Now to get the number of steps per day:
+```{r summary}
+daytotals <-tapply(timeToAct$Steps, INDEX=timeToAct$Date$yday, FUN=sum)
+daytotmean <- mean(daytotals, na.rm=TRUE)
+daytotmed <- median(daytotals, na.rm=TRUE)
+hist(daytotals, xlab="Daily Number of steps", col="blue", main="Total Steps per Day")
+```
+
+The median is `r daytotmean` and the mean is `r daytotmean`.
+
+
