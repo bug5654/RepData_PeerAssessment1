@@ -28,7 +28,7 @@ daytotmed <- median(daytotals, na.rm=TRUE)
 hist(daytotals, xlab="Daily Number of steps", col="wheat", main="Total Steps per Day", breaks=20)
 ```
 
-The median is `r daytotmean` and the mean is `r daytotmean`.
+The median is `r daytotmed` and the mean is `r daytotmean`.
 
 ##Interval##
 Now to cut by 5 minute interval (ignoring NA values)
@@ -44,6 +44,7 @@ plot(stepsAtTime, type="l", xlab="5 minute Interval (288 in a day)", ylab="Steps
 The maximum was `r maxsteps` at `r formattedmax`.
 
 ##Dealing with missing values:##
+In place of NA values, we substitute the mean of the interval in which the value occurs.
 ```{r missing}
 totna <- sum(is.na(timeToAct$Steps))
 ```
