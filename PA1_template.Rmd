@@ -25,7 +25,7 @@ Now to get the number of steps per day:
 daytotals <-tapply(timeToAct$Steps, INDEX=timeToAct$Date$yday, FUN=sum)
 daytotmean <- mean(daytotals, na.rm=TRUE)
 daytotmed <- median(daytotals, na.rm=TRUE)
-hist(daytotals, xlab="Daily Number of steps", col="blue", main="Total Steps per Day")
+hist(daytotals, xlab="Daily Number of steps", col="wheat", main="Total Steps per Day", breaks=20)
 ```
 
 The median is `r daytotmean` and the mean is `r daytotmean`.
@@ -38,7 +38,7 @@ maxsteps <- max(stepsAtTime)
 indexOfMax <- which(stepsAtTime==max(stepsAtTime))
 intervalMax <- 5*indexOfMax
 formattedmax <- paste(floor(intervalMax/60), ifelse(intervalMax-60*floor(intervalMax/60)<10, paste("0",intervalMax-60*floor(intervalMax/60), sep=""), intervalMax-60*floor(intervalMax/60)), sep=":")
-plot(stepsAtTime, type="l", xlab="5 minute Interval", ylab="Steps", main="Steps in 5 minutes over all days")
+plot(stepsAtTime, type="l", xlab="5 minute Interval (288 in a day)", ylab="Steps", main="Steps in 5 minutes over all days")
 ```
 
 The maximum was `r maxsteps` at `r formattedmax`.
