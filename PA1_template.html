@@ -106,7 +106,7 @@ plot(stepsAtTime, type=&quot;l&quot;, xlab=&quot;5 minute Interval (288 in a day
 </div>
 <div id="dealing-with-missing-values" class="section level2">
 <h2>Dealing with missing values:</h2>
-<p>In place of NA values, we substitute the mean of the interval in which the value occurs.</p>
+<p>In place of NA values, we substitute the mean of the interval in which the value occurs, as evaluated above in stepsAtTime.</p>
 <pre class="r"><code>totna &lt;- sum(is.na(timeToAct$Steps))
 percenttot &lt;- (sum(is.na(timeToAct$Steps))/length(timeToAct$Steps))*100
 
@@ -127,6 +127,21 @@ hist(daysums, xlab=&quot;Steps per day&quot;, main=&quot;Total Steps per Day&quo
 </div>
 <div id="weekdays-vs-weekends" class="section level2">
 <h2>Weekdays vs Weekends</h2>
+<p>Using the weekdays() function to seperate weekdays from weekends, we then compare them. In order to reduce the length of this report, much of the dataframes above will be used.</p>
+<pre class="r"><code>weekdayq &lt;- function(date){
+   tmp &lt;- weekdays(as.Date(as.character(date)))    #not so nice factor problems eliminated
+   if(tmp==&quot;Sunday&quot; || tmp==&quot;Saturday&quot;) {
+      return(1)
+   } else {
+      return(0)
+   }
+}
+
+weekdayData &lt;- filledsteps    #as above
+weekdayType &lt;- tapply(weekdayData$Date,INDEX = 1:length(weekdayData$Steps), FUN=weekdayq)
+weekday.factor&lt;-factor(weekdayType, labels = c(&quot;Weekday&quot;, &quot;Weekend&quot;))
+wdayWithFactor &lt;- cbind(weekdayData, weekday.factor)
+colnames(wdayWithFactor)[4] &lt;- &quot;Weekday&quot;</code></pre>
 </div>
 
 
