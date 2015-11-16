@@ -8,6 +8,7 @@ output: html_document
 ##Initalization##
 Initially load libraries and data
 ```{r loadinfo, echo=TRUE, results='hide'}
+options(digits=8)
 library(graphics)
 activity <- read.csv("activity.csv", header=TRUE, sep=",", quote="\"", na.strings="NA", stringsAsFactors=FALSE)
 tmptime <- activity$interval
@@ -47,6 +48,20 @@ The maximum was `r maxsteps` at `r formattedmax`.
 In place of NA values, we substitute the mean of the interval in which the value occurs.
 ```{r missing}
 totna <- sum(is.na(timeToAct$Steps))
+percenttot <- (sum(is.na(timeToAct$Steps))/length(timeToAct$Steps))*100
+
+filledsteps <- dateToAct #broken up first
+while(length(which(is.na(filledsteps$Steps)))>0) {   #fill in all na values
+   i=which(is.na(filledsteps$Steps))[1] #take first element index
+   hrmin<-strsplit(as.character(filledsteps[i,]$Time), split=":") #get the interval index for stepsAtTime
+   intervali<- (as.numeric(hrmin[[1]][1])*60 + as.numeric(hrmin[[1]][2]))/5 +1  #0:00 is the first element
+   if(intervali>288) {intervali<-1}    #some 24:00 in data as well as 0:00
+   filledsteps[i,]$Steps <- stepsAtTime[intervali]
+}
+daysums <- tapply(filledsteps$Steps, INDEX=filledsteps$Date, FUN=sum)
+daySumMean <- mean(daysums)
+daySumMedian <- median(daysums)
+hist(daysums, xlab="Steps per day", main="Total Steps per Day", col="blue", breaks=20)
 ```
 
-The total number of missing values is `r totna`
+The total number of missing values is `r totna`, that being `r percenttot`% of the data.  Once missing values are filled in with the mean of their timeslot, we get an average daily mean step count of `r daySumMean` and median of `r daySumMedian`.  This compares with the NA-containing data having median `r daytotmed` and the mean `r daytotmean`.
