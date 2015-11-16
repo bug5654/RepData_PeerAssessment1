@@ -45,7 +45,7 @@ plot(stepsAtTime, type="l", xlab="5 minute Interval (288 in a day)", ylab="Steps
 The maximum was `r maxsteps` at `r formattedmax`.
 
 ##Dealing with missing values:##
-In place of NA values, we substitute the mean of the interval in which the value occurs.
+In place of NA values, we substitute the mean of the interval in which the value occurs, as evaluated above in stepsAtTime.
 ```{r missing}
 totna <- sum(is.na(timeToAct$Steps))
 percenttot <- (sum(is.na(timeToAct$Steps))/length(timeToAct$Steps))*100
@@ -65,3 +65,24 @@ hist(daysums, xlab="Steps per day", main="Total Steps per Day", col="blue", brea
 ```
 
 The total number of missing values is `r totna`, that being `r percenttot`% of the data.  Once missing values are filled in with the mean of their timeslot, we get an average daily mean step count of `r daySumMean` and median of `r daySumMedian`.  This compares with the NA-containing data having median `r daytotmed` and the mean `r daytotmean`.
+
+
+##Weekdays vs Weekends##
+Using the weekdays() function to seperate weekdays from weekends, we then compare them.  In order to reduce the length of this report, much of the dataframes above will be used.
+```{r weekdays}
+weekdayq <- function(date){
+   tmp <- weekdays(as.Date(as.character(date)))    #not so nice factor problems eliminated
+   if(tmp=="Sunday" || tmp=="Saturday") {
+      return(1)
+   } else {
+      return(0)
+   }
+}
+
+weekdayData <- filledsteps    #as above
+weekdayType <- tapply(weekdayData$Date,INDEX = 1:length(weekdayData$Steps), FUN=weekdayq)
+weekday.factor<-factor(weekdayType, labels = c("Weekday", "Weekend"))
+wdayWithFactor <- cbind(weekdayData, weekday.factor)
+colnames(wdayWithFactor)[4] <- "Weekday"
+
+```
