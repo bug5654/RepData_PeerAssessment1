@@ -1,25 +1,51 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "Reproducible Research Project 1"
+author: "Nathan E. Wendling"
+date: "November 15, 2015"
+output: html_document
 ---
 
+##Initalization##
+Initially load libraries and data
+```{r loadinfo, echo=TRUE, results='hide'}
+library(graphics)
+activity <- read.csv("activity.csv", header=TRUE, sep=",", quote="\"", na.strings="NA", stringsAsFactors=FALSE)
+tmptime <- activity$interval
+tmptime <- paste(floor(tmptime/60), ifelse(tmptime-60*floor(tmptime/60)<10, paste("0",tmptime-60*floor(tmptime/60), sep=""), tmptime-60*floor(tmptime/60)), sep=":") #hh:mm, with 0 padding on minutes
+timeToAct <- data.frame(strptime(paste(activity$date, tmptime, sep=" "), format="%Y-%m-%d %H:%M"), activity$steps)
+colnames(timeToAct) <- c("Date", "Steps") #human understandable
+timeToAct$Date <- as.POSIXlt(timeToAct$Date) #easier to divide up by day
+dateToAct <- data.frame(activity$date, tmptime, activity$steps) #easier to divide up by interval
+colnames(dateToAct) <- c("Date", "Time", "Steps")
+```
 
-## Loading and preprocessing the data
+##Daily##
+Now to get the number of steps per day:
+```{r summary}
+daytotals <-tapply(timeToAct$Steps, INDEX=timeToAct$Date$yday, FUN=sum)
+daytotmean <- mean(daytotals, na.rm=TRUE)
+daytotmed <- median(daytotals, na.rm=TRUE)
+hist(daytotals, xlab="Daily Number of steps", col="blue", main="Total Steps per Day")
+```
 
+The median is `r daytotmean` and the mean is `r daytotmean`.
 
+##Interval##
+Now to cut by 5 minute interval (ignoring NA values)
+```{r timing}
+stepsAtTime<-tapply(dateToAct$Steps, INDEX=dateToAct$Time, FUN=mean, na.rm=TRUE)
+maxsteps <- max(stepsAtTime)
+indexOfMax <- which(stepsAtTime==max(stepsAtTime))
+intervalMax <- 5*indexOfMax
+formattedmax <- paste(floor(intervalMax/60), ifelse(intervalMax-60*floor(intervalMax/60)<10, paste("0",intervalMax-60*floor(intervalMax/60), sep=""), intervalMax-60*floor(intervalMax/60)), sep=":")
+plot(stepsAtTime, type="l", xlab="5 minute Interval", ylab="Steps", main="Steps in 5 minutes over all days")
+```
 
-## What is mean total number of steps taken per day?
+The maximum was `r maxsteps` at `r formattedmax`.
 
+##Dealing with missing values:##
+```{r missing}
+totna <- sum(is.na(timeToAct$Steps))
+```
 
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+The total number of missing values is `r totna`

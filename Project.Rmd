@@ -5,6 +5,7 @@ date: "November 15, 2015"
 output: html_document
 ---
 
+##Initalization##
 Initially load libraries and data
 ```{r loadinfo, echo=TRUE, results='hide'}
 library(graphics)
@@ -18,6 +19,7 @@ dateToAct <- data.frame(activity$date, tmptime, activity$steps) #easier to divid
 colnames(dateToAct) <- c("Date", "Time", "Steps")
 ```
 
+##Daily##
 Now to get the number of steps per day:
 ```{r summary}
 daytotals <-tapply(timeToAct$Steps, INDEX=timeToAct$Date$yday, FUN=sum)
@@ -28,6 +30,7 @@ hist(daytotals, xlab="Daily Number of steps", col="blue", main="Total Steps per 
 
 The median is `r daytotmean` and the mean is `r daytotmean`.
 
+##Interval##
 Now to cut by 5 minute interval (ignoring NA values)
 ```{r timing}
 stepsAtTime<-tapply(dateToAct$Steps, INDEX=dateToAct$Time, FUN=mean, na.rm=TRUE)
@@ -40,3 +43,9 @@ plot(stepsAtTime, type="l", xlab="5 minute Interval", ylab="Steps", main="Steps 
 
 The maximum was `r maxsteps` at `r formattedmax`.
 
+##Dealing with missing values:##
+```{r missing}
+totna <- sum(is.na(timeToAct$Steps))
+```
+
+The total number of missing values is `r totna`
