@@ -81,21 +81,8 @@ weekdayq <- function(date){
 
 weekdayData <- filledsteps    #as above
 weekdayType <- tapply(weekdayData$Date,INDEX = 1:length(weekdayData$Steps), FUN=weekdayq)
-weekday.factor<-factor(weekdayType, labels = c("Weekday", "Weekend")) #weekday or weekend?
+weekday.factor<-factor(weekdayType, labels = c("Weekday", "Weekend"))
 wdayWithFactor <- cbind(weekdayData, weekday.factor)
 colnames(wdayWithFactor)[4] <- "Weekday"
 
-weekdaysdata<-subset(wdayWithFactor, Weekday=="Weekday")
-weekdayTimeAverage <- tapply(weekdaysdata$Steps, INDEX=weekdaysdata$Time, FUN=mean)
-weekdayStepAvg <- sum(weekdayTimeAverage)
-
-weekendsdata<-subset(wdayWithFactor, Weekday=="Weekend")
-weekendTimeAverage <- tapply(weekendsdata$Steps, INDEX=weekendsdata$Time, FUN=mean)
-weekendStepAvg <- sum(weekendTimeAverage)
-
-par(mfrow=c(2,1))
-plot(weekendTimeAverage, ylab="Steps in Interval", xlab="", type="l")
-plot(weekdayTimeAverage, ylab="Steps in Interval", xlab="", type="l")
 ```
-
-Thus we can meaningfully compare the weekday to the weekend, both visually time to time and in a mean as well, with the weekdays having an average total of `r weekdayStepAvg` steps per day and the weekends having `r weekendStepAvg` average steps per day.
